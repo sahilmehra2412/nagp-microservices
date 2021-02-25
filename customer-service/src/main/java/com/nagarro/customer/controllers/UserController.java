@@ -3,6 +3,8 @@ package com.nagarro.customer.controllers;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,9 +30,17 @@ public class UserController {
 	
 	@GetMapping("/login")
 	@ResponseBody
-	public Map<String, Boolean> loginUser(@RequestParam String username, @RequestParam String password){
+	public Map<String, Boolean> loginUser(@RequestParam String username, @RequestParam String password,
+			final HttpSession session){
 		Map<String, Boolean> msg = new HashMap<>();
 		msg.put("message", authentication.login(username, password));
+		session.setAttribute(username, authentication.login(username, password));
 		return msg;
+	}
+	
+	@GetMapping("/isLogged")
+	@ResponseBody
+	public boolean isLogged(@RequestParam String username, final HttpSession session) {
+		return (boolean) session.getAttribute(username);
 	}
 }
